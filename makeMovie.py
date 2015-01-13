@@ -23,6 +23,7 @@ parser.add_option("-m", "--target-moviename", dest="target_moviename", help="(Op
 parser.add_option("-f", "--target-framerate", dest="target_framerate", help="(Optional) defaults to 10 fps" )
 parser.add_option("-b", "--target-bitrate", dest="target_bitrate", help="(Optional) defaults to 1800 bps" )
 parser.add_option("-e", "--source-framerate", dest="source_framerate", help="(Optional) defaults to 10 fps" )
+parser.add_option("-k", "--skip-conversion", dest="skip_conversion", help="(Optional) defaults to false" )
 
 (options,args)=parser.parse_args()
 
@@ -39,20 +40,28 @@ else:
 if options.source_dir:
 	source_dir = options.source_dir
 else:
-	source_dir = 'myPng'
+	source_dir = 'myPngs'
 
 if options.target_dir:
 	target_dir = options.target_dir
 else:
-	target_dir = 'myJpg'  
+	target_dir = 'myJpgs'  
 
-if options.target_dir:
+if options.skip_conversion:
+	skip_conv = options.skip_conversion
+else:
+	skip_conv = False  
+    
+if target_dir:
 	try:
-	    os.mkdir( options.target_dir )
+	    os.mkdir( target_dir )
 	except:
 	    pass
 
-if source_filetype and target_filetype and source_dir and target_dir:
+if skip_conv:
+    print 'Skipping conversion'
+    
+if source_filetype and target_filetype and source_dir and target_dir and not skip_conv:
 	print target_dir
 	dir_list = os.listdir( source_dir )
 
@@ -62,8 +71,8 @@ if source_filetype and target_filetype and source_dir and target_dir:
 	for file in dir_list:
 		if re.match( matchStr, file ):
 			#print "Matched", file
-			if target_filename:
-				convCmd = 'convert %s/%s %s/%s%04d.%s'%(source_dir,file,target_dir,i,target_filename,i,target_filetype)
+			if options.target_filename:
+				convCmd = 'convert %s/%s %s/%s%04d.%s'%(source_dir,file,target_dir,i,options.target_filename,i,target_filetype)
 				print convCmd
 				os.system( convCmd )
 			else:
@@ -92,8 +101,8 @@ if options.target_moviename:
 		bit_rate = 1800
         
     # print frame_rate, bit_rate
-	print 'Now converting files from %s to an mp4 movie titled %s'%(options.target_dir, options.target_moviename)
-	ffmpegCmd = 'ffmpeg -r %d -i %s/%%04d.jpg -r %d %s'%( source_rate, options.target_dir, frame_rate, options.target_moviename )
+	print 'Now converting files from %s to an mp4 movie titled %s'%(target_dir, options.target_moviename)
+	ffmpegCmd = 'ffmpeg -r %d -i %s/%%04d.jpg -r %d %s'%( source_rate, target_dir, frame_rate, options.target_moviename )
 	print ffmpegCmd
 	os.system( ffmpegCmd )
 
