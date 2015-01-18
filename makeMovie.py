@@ -40,7 +40,7 @@ else:
 if options.source_dir:
 	source_dir = options.source_dir
 else:
-	source_dir = 'myPngs'
+	source_dir = '.'
 
 if options.target_dir:
 	target_dir = options.target_dir
@@ -88,7 +88,7 @@ if options.target_moviename:
 	if options.target_framerate:
 		frame_rate = int(options.target_framerate)
 	else:
-		frame_rate = 10
+		frame_rate = 20
         
 	if options.source_framerate:
 		source_rate = int(options.source_framerate)
